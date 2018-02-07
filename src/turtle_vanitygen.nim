@@ -58,7 +58,7 @@ proc bruteforce(index, seed: uint64; prefix: string) =
       break
 
 when defined(genode):
-  const promptMsg = "Enter desired Monero address prefix: "
+  const promptMsg = "Enter desired TurtleCoin address prefix: "
   stdout.write promptMsg
   var
     prefix = newString(FullEncodedBlockSize-5) # that would take a long time
@@ -87,7 +87,7 @@ else:
   import os
   let params = commandLineParams()
   if params.len != 1:
-    stderr.writeLine "please supply a Monero address prefix"
+    stderr.writeLine "please supply a TurtleCoin address prefix"
     quit 1
   let prefix = params[0]
   for c in prefix.items:

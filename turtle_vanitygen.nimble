@@ -1,12 +1,14 @@
-version       = "0.1.1"
-author        = "Emery Hemingway"
-description   = "Libraries and utilites related to Monero, a CryptoNote cryptocurrency."
+version       = "0.1.0"
+author        = "Emery Hemingway, MoonMoonDogo"
+description   = "A vanity address generator for TurtleCoin."
 license       = "MIT"
 
 requires "nim >= 0.17.1"
 requires "base58 >= 0.1.1"
 
-bin = @["monero/monero_vanity"]
+srcDir = "src"
+binDir = "out"
+bin = @["turtle_vanitygen"]
 skipDirs = @["tests"]
 
 task tests, "Runs tests":

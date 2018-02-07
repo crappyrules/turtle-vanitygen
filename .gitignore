@@ -1,7 +1,9 @@
 nimcache
+out
 *.view
 *.spend
-/monero/monero_vanity
 /tests/crypto_tests
-address.html base58.html crypto.html crypto_ops.html mnemonics.html
+/tests/crypto_tests.exe
 /tests/mnemonic_tests
+/tests/mnemonic_tests.exe
+address.html base58.html crypto.html crypto_ops.html mnemonics.html
