@@ -1,6 +1,11 @@
 import address, mnemonics, pcg, base58.cryptonote, crypto
 import strutils, threadpool, cpuInfo, locks
 
+when defined(windows):
+  import windows_urandom as os_urandom
+when not defined(windows):
+  import posix_urandom as os_urandom
+
 const FinalMsg = """
 
 Write the mnemonic seed on paper and keep it in a safe place.
@@ -30,6 +35,7 @@ proc bruteforce(index, seed: uint64; prefix: string) =
     buf: array[33, uint8]
     key: SpendSecret
     pcg = Pcg32(state: seed, inc: index)
+  stdout.writeLine seed
   buf[0] = NetworkTag
   while true:
     for i in countup(0, <key.len, sizeof(uint32)):
@@ -86,11 +92,16 @@ else:
   stdout.writeLine "gathering entropy and bruteforcing '", prefix, "'..."
 
 proc randInt(): uint64 =
-  let random = open "/dev/random"
-  while true:
-    if random.readBuffer(addr result, sizeof(result)) == sizeof(result):
-      break
-  close random
+  let rand_seq = os_urandom.urandom(8)
+  var offset = 0
+  result = (cast[uint64](rand_seq[offset]) shl 0) or
+           (cast[uint64](rand_seq[offset+1]) shl 8) or
+           (cast[uint64](rand_seq[offset+2]) shl 16) or
+           (cast[uint64](rand_seq[offset+3]) shl 24) or
+           (cast[uint64](rand_seq[offset+4]) shl 32) or
+           (cast[uint64](rand_seq[offset+5]) shl 40) or
+           (cast[uint64](rand_seq[offset+6]) shl 48) or
+           (cast[uint64](rand_seq[offset+7]) shl 56)
 
 for i in 1..countProcessors():
   spawn bruteforce(i.uint64, randInt(), prefix)
