@@ -33,7 +33,7 @@ proc found(key: SpendSecret) =
 proc bruteforce(index, seed: uint64; prefix: string) =
   var
     b58 = newString(cryptonote.FullEncodedBlockSize)
-    #b58 = newString(cryptonote.FullEncodedBlockSize)
+    #b58 = newString(cryptonote.FullEncodedBlockSize * 2)
     buf: array[36, uint8]
     key: SpendSecret
     pcg = Pcg32(state: seed, inc: index)
