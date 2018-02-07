@@ -9,7 +9,7 @@ when not defined(windows):
 const FinalMsg = """
 
 Write the mnemonic seed on paper and keep it in a safe place.
-The spend secret key has been written to file.
+The spend and view secret key have been written to file.
 """
 
 var chan: Channel[SpendSecret]
@@ -27,24 +27,29 @@ proc found(key: SpendSecret) =
       words[16..23].join(" "), "\n",
       words[24]
     writeFile(b56Addr & ".view", $view & "\n")
+    writeFile(b56Addr & ".spend", $key & "\n")
     stdout.writeLine FinalMsg
 
 proc bruteforce(index, seed: uint64; prefix: string) =
   var
     b58 = newString(cryptonote.FullEncodedBlockSize)
-    buf: array[33, uint8]
+    #b58 = newString(cryptonote.FullEncodedBlockSize)
+    buf: array[36, uint8]
     key: SpendSecret
     pcg = Pcg32(state: seed, inc: index)
-  stdout.writeLine seed
-  buf[0] = NetworkTag
+  buf[0] = NetworkTag[0]
+  buf[1] = NetworkTag[1]
+  buf[2] = NetworkTag[2]
+  buf[3] = NetworkTag[3]
   while true:
     for i in countup(0, <key.len, sizeof(uint32)):
       var x = pcg.next
       copyMem(addr key[i], addr x, sizeof(uint32))
     key.reduce
-    key.toPublicKey cast[var PublicKey](addr buf[1])
+    key.toPublicKey cast[var PublicKey](addr buf[4])
     cryptonote.encodeBlock(b58, 0, buf, 0, FullBlockSize)
-    if b58.continuesWith(prefix, 2):
+    #cryptonote.encodeBlock(b58, 11, buf, FullBlockSize, FullBlockSize)
+    if b58.continuesWith(prefix, 6):
       # The first two characters of the address will contain a subset
       # of the base58 alphabet, skip them rather than wait for patterns
       # that will never occur
@@ -56,7 +61,7 @@ when defined(genode):
   const promptMsg = "Enter desired Monero address prefix: "
   stdout.write promptMsg
   var
-    prefix = newString(FullEncodedBlockSize-2) # that would take a long time
+    prefix = newString(FullEncodedBlockSize-5) # that would take a long time
     off = 0
     #linePos = promptMsg.len
   block input:

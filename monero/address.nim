@@ -32,24 +32,27 @@ proc address*(spend: SpendSecret): Address =
   withSecret view:
     result = address(spend, view)
 
-const NetworkTag* = 0x12
+const NetworkTag* = [0x9d'u8, 0xf6'u8, 0xee'u8, 0x01'u8]
 
 proc `$`*(a: Address): string =
   # not very efficient
   var
-    buf: array[69, uint8]
+    buf: array[72, uint8]
     keccak: SHA3
   sha3_init keccak, Keccak256
-  sha3_update keccak, [NetworkTag]
-  buf[0] = NetworkTag
+  sha3_update keccak, NetworkTag
+  buf[0] = NetworkTag[0]
+  buf[1] = NetworkTag[1]
+  buf[2] = NetworkTag[2]
+  buf[3] = NetworkTag[3]
   for i in 0..31:
-    buf[i+1] = a.spend[i]
+    buf[i+4] = a.spend[i]
   sha3_update keccak, a.spend
   for i in 0..31:
-    buf[i+33] = a.view[i]
+    buf[i+36] = a.view[i]
   sha3_update keccak, a.view
   let digest = sha3_final keccak
   for i in 0..3:
-    buf[i+65] = digest[i]
+    buf[i+68] = digest[i]
 
   cryptonote.encode(buf)
