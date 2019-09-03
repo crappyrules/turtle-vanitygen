@@ -6,13 +6,26 @@ cryptographic primitives and some address handling procedures.
 These wrappers are used for a vanity address generator for [TurtleCoin](https://turtlecoin.lol/).
 Most of this repository was programmed by @ehmry ([nim-monero](https://github.com/ehmry/nim-monero)).
 
+## Dependencies
+
+You'll need both `nim` and `nimble` installed. On ubuntu:
+
+```sudo apt install nim```
+
 ## Building
-Clone the repository and run ``nimble build``.
+
+Clone the repository and run ``nimble build`` inside of the directory.
 
 ## Running
+
 Run the binary in the ``out`` directory with your desired prefix.
 
+```
+./turtle_vanitygen myprefix
+```
+
 ## Limitations
+
 Currently, only one block is encoded to base58 resulting in 12 characters.
 
 TurtleCoin addresses start with ``TRTL``, followed by either ``u`` or ``v``,
